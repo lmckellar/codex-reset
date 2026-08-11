@@ -15,6 +15,8 @@ The first functional static MVP is implemented in `public/`. It presents an inte
 
 The site fetches the JSON ledger without caching and safely falls back to the unknown state already present in the HTML if loading fails. Dates are rendered in the visitor's local timezone.
 
+The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, UTC timestamps, source URL, and newest-first history ordering.
+
 ## Data contract
 
 The external surveillance process owns reset intelligence. It should update `public/reset-data.json`, preserving the existing fields and ISO 8601 UTC timestamps. Valid confidence labels are:
@@ -28,10 +30,9 @@ Each history entry should contain `resetAt`, `confidence`, and a concise `summar
 
 ## Validation
 
-- JSON syntax checked with `jq`.
-- Static site served locally and both `/` and `/reset-data.json` requested successfully.
-- HTML checked for local asset references and responsive/reduced-motion behavior by inspection.
+- `node scripts/validate-reset-data.mjs`
+- `git diff --check`
 
 ## Next useful work
 
-Connect the surveillance process to the ledger and replace the unknown initial record with real observations. Once real data exists, verify history ordering and source links against its output shape before adding further presentation features.
+Connect the surveillance process to the ledger, run the validator before publishing its output, and replace the unknown initial record with real observations. Once real data exists, verify source links against its output shape before adding further presentation features.

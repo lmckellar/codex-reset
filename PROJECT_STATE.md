@@ -16,7 +16,7 @@ The first functional static MVP is implemented in `public/`. It presents an inte
 
 The site fetches the JSON ledger without caching and safely falls back to the unknown state already present in the HTML if loading fails. Dates are rendered in the visitor's local timezone. Runtime source links are restricted to HTTP(S), matching the ledger validator.
 
-The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, UTC timestamps, source URL, and newest-first history ordering.
+The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, UTC timestamps, source URL, and newest-first history ordering. It accepts an optional ledger path so surveillance can validate staged output before atomically replacing the public file.
 
 ## Data contract
 
@@ -32,8 +32,9 @@ Each history entry should contain `resetAt`, `confidence`, and a concise `summar
 ## Validation
 
 - `node scripts/validate-reset-data.mjs`
+- `node scripts/validate-reset-data.mjs /path/to/staged-reset-data.json`
 - `git diff --check`
 
 ## Next useful work
 
-Connect the surveillance process to the ledger, run the validator before publishing its output, and replace the unknown initial record with real observations. Once real data exists, perform an end-to-end check against its output shape before adding further presentation features.
+Connect the surveillance process to the ledger, validate a staged file before atomically publishing it, and replace the unknown initial record with real observations. Once real data exists, perform an end-to-end check against its output shape before adding further presentation features.

@@ -1,8 +1,18 @@
 #!/usr/bin/env node
 
 import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
-const ledgerPath = new URL("../public/reset-data.json", import.meta.url);
+if (process.argv.length > 3) {
+  console.error("Usage: node scripts/validate-reset-data.mjs [ledger-path]");
+  process.exit(2);
+}
+
+const ledgerPath = process.argv[2]
+  ? pathToFileURL(resolve(process.argv[2]))
+  : new URL("../public/reset-data.json", import.meta.url);
+const ledgerName = process.argv[2] || "public/reset-data.json";
 const confidenceLabels = new Set([
   "RESET CONFIRMED",
   "PROBABLE BLESSING",
@@ -45,7 +55,7 @@ let ledger;
 try {
   ledger = JSON.parse(await readFile(ledgerPath, "utf8"));
 } catch (error) {
-  console.error(`reset-data.json could not be read: ${error.message}`);
+  console.error(`${ledgerName} could not be read: ${error.message}`);
   process.exit(1);
 }
 
@@ -91,4 +101,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log("reset-data.json is valid");
+console.log(`${ledgerName} is valid`);

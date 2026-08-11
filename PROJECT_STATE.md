@@ -22,6 +22,8 @@ The `scripts/publish-reset-data.sh` helper now owns that atomic publication step
 
 The dependency-free `scripts/test-reset-data-validator.mjs` regression runner exercises representative accepted and rejected ledgers in an isolated temporary directory. It covers populated and empty valid ledgers plus the most consequential timestamp, ordering, confidence, provenance URL, and reset-history consistency failures.
 
+The isolated `scripts/test-reset-data-publisher.mjs` integration runner verifies the publication boundary itself: invalid staged data is rejected without modifying the public ledger, valid data replaces it, destination permissions are preserved, and temporary publication files are cleaned up.
+
 ## Data contract
 
 The external surveillance process owns reset intelligence. It should update `public/reset-data.json`, preserving the existing fields and ISO 8601 UTC timestamps. Valid confidence labels are:
@@ -38,6 +40,7 @@ Each history entry should contain `resetAt`, `confidence`, and a concise `summar
 - `node scripts/validate-reset-data.mjs`
 - `node scripts/validate-reset-data.mjs /path/to/staged-reset-data.json`
 - `node scripts/test-reset-data-validator.mjs`
+- `node scripts/test-reset-data-publisher.mjs`
 - `scripts/publish-reset-data.sh /path/to/staged-reset-data.json`
 - `git diff --check`
 

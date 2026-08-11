@@ -21,6 +21,7 @@ Run the validator's regression suite with:
 
 ```sh
 node scripts/test-reset-data-validator.mjs
+node scripts/test-reset-data-publisher.mjs
 ```
 
 The expected fields and confidence vocabulary are recorded in `PROJECT_STATE.md`.

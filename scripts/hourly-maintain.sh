@@ -25,7 +25,8 @@ git pull --ff-only origin main >>"$LOG" 2>&1
 START_HEAD="$(git rev-parse HEAD)"
 
 set +e
-timeout 50m codex exec --full-auto \
+timeout 50m /home/lachlan/.nvm/versions/node/v22.22.2/bin/codex exec \
+    --sandbox workspace-write \
     "Read ABBEY.md and carry out one maintenance cycle. Inspect the repository first. Do the highest-value bounded work available, validate it sensibly, update PROJECT_STATE.md, and leave the resulting changes uncommitted for the wrapper." \
     </dev/null >>"$LOG" 2>&1
 RC=$?

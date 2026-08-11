@@ -1,6 +1,6 @@
 # Project State
 
-Updated: 2026-08-11
+Updated: 2026-08-12
 
 ## Current state
 
@@ -18,6 +18,8 @@ The site fetches the JSON ledger without caching and safely falls back to the un
 
 The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, UTC timestamps, source URL, and newest-first history ordering. It accepts an optional ledger path so surveillance can validate staged output before atomically replacing the public file.
 
+The `scripts/publish-reset-data.sh` helper now owns that atomic publication step. It validates a staged ledger first, copies it to a temporary file beside the public ledger, preserves the existing file mode, and renames it into place only after validation succeeds. Invalid staged data leaves the public ledger untouched.
+
 ## Data contract
 
 The external surveillance process owns reset intelligence. It should update `public/reset-data.json`, preserving the existing fields and ISO 8601 UTC timestamps. Valid confidence labels are:
@@ -33,8 +35,9 @@ Each history entry should contain `resetAt`, `confidence`, and a concise `summar
 
 - `node scripts/validate-reset-data.mjs`
 - `node scripts/validate-reset-data.mjs /path/to/staged-reset-data.json`
+- `scripts/publish-reset-data.sh /path/to/staged-reset-data.json`
 - `git diff --check`
 
 ## Next useful work
 
-Connect the surveillance process to the ledger, validate a staged file before atomically publishing it, and replace the unknown initial record with real observations. Once real data exists, perform an end-to-end check against its output shape before adding further presentation features.
+Connect the surveillance process to `scripts/publish-reset-data.sh` and replace the unknown initial record with real observations. Once real data exists, perform an end-to-end check against its output shape before adding further presentation features.

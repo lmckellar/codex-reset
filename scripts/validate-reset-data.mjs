@@ -76,13 +76,20 @@ if (requireObject(ledger, "ledger")) {
   if (ledger.schemaVersion !== 1) errors.push("schemaVersion must be 1");
   requireText(ledger.state, "state");
   requireConfidence(ledger.confidence, "confidence");
-  parseUtcTimestamp(ledger.lastResetAt, "lastResetAt", { nullable: true });
-  parseUtcTimestamp(ledger.updatedAt, "updatedAt");
+  const lastResetTimestamp = parseUtcTimestamp(ledger.lastResetAt, "lastResetAt", { nullable: true });
+  const updatedTimestamp = parseUtcTimestamp(ledger.updatedAt, "updatedAt");
   requireText(ledger.statusText, "statusText");
+
+  if (lastResetTimestamp !== null && updatedTimestamp !== null && lastResetTimestamp > updatedTimestamp) {
+    errors.push("lastResetAt must not be later than updatedAt");
+  }
 
   if (requireObject(ledger.source, "source")) {
     requireText(ledger.source.name, "source.name");
-    parseUtcTimestamp(ledger.source.observedAt, "source.observedAt", { nullable: true });
+    const observedTimestamp = parseUtcTimestamp(ledger.source.observedAt, "source.observedAt", { nullable: true });
+    if (observedTimestamp !== null && updatedTimestamp !== null && observedTimestamp > updatedTimestamp) {
+      errors.push("source.observedAt must not be later than updatedAt");
+    }
     if (ledger.source.url !== null) {
       try {
         const url = new URL(ledger.source.url);
@@ -97,6 +104,7 @@ if (requireObject(ledger, "ledger")) {
     errors.push("history must be an array");
   } else {
     let previousTimestamp = Infinity;
+    let newestHistoryTimestamp = null;
     ledger.history.forEach((event, index) => {
       const path = `history[${index}]`;
       if (!requireObject(event, path)) return;
@@ -104,8 +112,20 @@ if (requireObject(ledger, "ledger")) {
       requireConfidence(event.confidence, `${path}.confidence`);
       requireText(event.summary, `${path}.summary`);
       if (timestamp !== null && timestamp > previousTimestamp) errors.push("history must be ordered newest first");
+      if (index === 0) newestHistoryTimestamp = timestamp;
+      if (timestamp !== null && updatedTimestamp !== null && timestamp > updatedTimestamp) {
+        errors.push(`${path}.resetAt must not be later than updatedAt`);
+      }
       if (timestamp !== null) previousTimestamp = timestamp;
     });
+
+    if (lastResetTimestamp === null && ledger.history.length > 0) {
+      errors.push("lastResetAt must be populated when history contains reset events");
+    } else if (lastResetTimestamp !== null && ledger.history.length === 0) {
+      errors.push("history must contain the lastResetAt event");
+    } else if (lastResetTimestamp !== null && newestHistoryTimestamp !== null && lastResetTimestamp !== newestHistoryTimestamp) {
+      errors.push("lastResetAt must match the newest history event");
+    }
   }
 }
 

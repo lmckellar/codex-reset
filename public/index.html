@@ -121,7 +121,7 @@
 
     .decree {
       display: inline-block;
-      margin: 28px 0 7px;
+      margin: 15px 0 7px;
       padding: 9px 18px;
       border: 1px solid currentColor;
       color: var(--gold);
@@ -135,6 +135,16 @@
     .decree[data-confidence="unverified"] { color: #d9b9e8; }
     .decree[data-confidence="probable"] { color: #8fd8ff; }
     .decree[data-confidence="hysteria"] { color: #ff8a80; }
+
+    .state {
+      margin: 24px 0 0;
+      color: var(--muted);
+      font: 600 .78rem/1.4 Cinzel, serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .state span { color: var(--cream); }
 
     .counter {
       margin: 18px 0 6px;
@@ -237,6 +247,7 @@
     <section class="hero" aria-labelledby="state-heading">
       <p class="eyebrow">The canonical observance</p>
       <h1 id="state-heading">The Reset<br>Reliquary</h1>
+      <p class="state">Current state · <span id="state">Unknown</span></p>
       <p class="decree" id="confidence" data-confidence="unverified">UNVERIFIED APPARITION</p>
       <p class="counter" id="counter">—</p>
       <p class="counter-label" id="counter-label">No last reset has been recorded</p>
@@ -304,8 +315,27 @@
       const confidence = confidenceTone[data.confidence] ? data.confidence : "UNVERIFIED APPARITION";
       $("confidence").textContent = confidence;
       $("confidence").dataset.confidence = confidenceTone[confidence];
+      $("state").textContent = typeof data.state === "string" && data.state.trim()
+        ? data.state.trim()
+        : "Unknown";
       $("evidence").textContent = data.statusText || "No evidence summary is available.";
-      $("source").textContent = data.source?.name || "Unknown source";
+
+      const sourceName = data.source?.name || "Unknown source";
+      const sourceUrl = (() => {
+        try {
+          const url = new URL(data.source?.url);
+          return ["http:", "https:"].includes(url.protocol) ? url.href : null;
+        } catch {
+          return null;
+        }
+      })();
+      const source = sourceUrl ? document.createElement("a") : document.createTextNode(sourceName);
+      if (sourceUrl) {
+        source.href = sourceUrl;
+        source.textContent = sourceName;
+        source.rel = "noopener noreferrer";
+      }
+      $("source").replaceChildren(source);
 
       const updated = validDate(data.updatedAt);
       const observed = validDate(data.source?.observedAt);

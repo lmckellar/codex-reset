@@ -1,1 +1,346 @@
-<h1>Codex Reset</h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2d0e3e">
+  <meta name="description" content="A needlessly ceremonial record of the Codex reset state.">
+  <title>Codex Reset Abbey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&amp;family=Playfair+Display:ital,wght@0,500;0,700;1,500&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --purple: #2d0e3e;
+      --purple-deep: #15071e;
+      --blue: #51b9e8;
+      --gold: #ffd700;
+      --gold-soft: #e5b84b;
+      --mahogany: #351510;
+      --cream: #fff5d6;
+      --muted: #cbbfd0;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at 50% 12%, rgba(81, 185, 232, .16), transparent 25rem),
+        linear-gradient(rgba(255, 215, 0, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 215, 0, .025) 1px, transparent 1px),
+        linear-gradient(145deg, var(--purple), var(--purple-deep) 65%);
+      background-size: auto, 32px 32px, 32px 32px, auto;
+      font-family: "Playfair Display", Georgia, serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(5, 0, 8, .72));
+    }
+
+    a { color: var(--gold); }
+
+    .page {
+      position: relative;
+      width: min(1120px, calc(100% - 32px));
+      margin: auto;
+      padding: 30px 0 56px;
+    }
+
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid rgba(255, 215, 0, .35);
+      padding: 0 4px 18px;
+      font-family: Cinzel, serif;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      font-size: .72rem;
+      color: var(--gold-soft);
+    }
+
+    .brand { font-weight: 800; }
+    .brand::before, .brand::after { content: " ✦ "; color: var(--blue); }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      margin: 38px auto 26px;
+      max-width: 850px;
+      min-height: 530px;
+      padding: 74px 44px 54px;
+      text-align: center;
+      background:
+        linear-gradient(rgba(31, 8, 43, .74), rgba(17, 4, 23, .94)),
+        repeating-conic-gradient(from 0deg, rgba(81, 185, 232, .22) 0 8deg, transparent 8deg 16deg);
+      border: 2px solid var(--gold-soft);
+      border-radius: 50% 50% 20px 20px / 28% 28% 20px 20px;
+      box-shadow: 0 0 0 7px rgba(53, 21, 16, .9), 0 0 0 9px rgba(255, 215, 0, .28), 0 30px 80px #09020d;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 330px;
+      height: 330px;
+      left: 50%;
+      top: 43%;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 215, 0, .22), rgba(81, 185, 232, .08) 47%, transparent 69%);
+      box-shadow: 0 0 70px rgba(255, 215, 0, .15);
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    .eyebrow {
+      margin: 0 0 15px;
+      color: var(--blue);
+      font: 700 .72rem/1.4 Cinzel, serif;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--gold);
+      font: 800 clamp(2.5rem, 8vw, 5.4rem)/.98 Cinzel, serif;
+      letter-spacing: -.04em;
+      text-shadow: 0 2px 0 #71510a, 0 0 25px rgba(255, 215, 0, .35);
+    }
+
+    .decree {
+      display: inline-block;
+      margin: 28px 0 7px;
+      padding: 9px 18px;
+      border: 1px solid currentColor;
+      color: var(--gold);
+      font: 700 clamp(.82rem, 2vw, 1rem)/1 Cinzel, serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: rgba(20, 5, 28, .82);
+      box-shadow: 0 0 24px rgba(255, 215, 0, .12);
+    }
+
+    .decree[data-confidence="unverified"] { color: #d9b9e8; }
+    .decree[data-confidence="probable"] { color: #8fd8ff; }
+    .decree[data-confidence="hysteria"] { color: #ff8a80; }
+
+    .counter {
+      margin: 18px 0 6px;
+      font: 600 clamp(2rem, 6vw, 4.2rem)/1 Cinzel, serif;
+      font-variant-numeric: tabular-nums;
+      color: white;
+    }
+
+    .counter-label {
+      margin: 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .evidence {
+      max-width: 590px;
+      margin: 28px auto 0;
+      line-height: 1.65;
+      color: #e3dbe6;
+    }
+
+    .ornament {
+      margin: 24px 0 0;
+      color: var(--gold-soft);
+      letter-spacing: .65em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr);
+      gap: 24px;
+    }
+
+    .card {
+      position: relative;
+      padding: 28px;
+      background: linear-gradient(145deg, rgba(63, 24, 78, .82), rgba(28, 8, 35, .92));
+      border: 1px solid rgba(255, 215, 0, .38);
+      border-radius: 4px 4px 18px 18px;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, .22), 0 18px 40px rgba(0, 0, 0, .2);
+    }
+
+    .card::before, .card::after {
+      content: "❦";
+      position: absolute;
+      color: var(--gold-soft);
+      opacity: .68;
+    }
+    .card::before { top: 9px; left: 12px; }
+    .card::after { right: 12px; bottom: 9px; rotate: 180deg; }
+
+    h2 {
+      margin: 0 0 22px;
+      color: var(--gold);
+      font: 700 1rem/1.3 Cinzel, serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .history { margin: 0; padding: 0; list-style: none; }
+    .history li { padding: 14px 0; border-top: 1px solid rgba(255, 255, 255, .1); }
+    .history li:first-child { border-top: 0; padding-top: 0; }
+    .history time { display: block; color: var(--blue); font-family: Cinzel, serif; font-size: .83rem; }
+    .history p { margin: 6px 0 0; color: var(--muted); }
+
+    dl { margin: 0; }
+    dt { margin-top: 18px; color: var(--gold-soft); font: 600 .72rem Cinzel, serif; letter-spacing: .1em; text-transform: uppercase; }
+    dt:first-child { margin-top: 0; }
+    dd { margin: 6px 0 0; line-height: 1.5; color: var(--muted); overflow-wrap: anywhere; }
+
+    footer {
+      padding: 34px 10px 0;
+      text-align: center;
+      color: #9f91a4;
+      font-size: .85rem;
+    }
+
+    .error { color: #ffaaa3; }
+    [hidden] { display: none !important; }
+
+    @keyframes breathe { 50% { scale: 1.08; opacity: .72; } }
+
+    @media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } }
+    @media (max-width: 720px) {
+      .page { width: min(100% - 20px, 1120px); padding-top: 18px; }
+      .masthead { align-items: flex-start; font-size: .62rem; }
+      .hero { min-height: 500px; margin-top: 22px; padding: 66px 20px 44px; }
+      .grid { grid-template-columns: 1fr; }
+      .card { padding: 25px 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <span class="brand">Codex Reset Abbey</span>
+      <span id="updated">Awaiting the sacristan</span>
+    </header>
+
+    <section class="hero" aria-labelledby="state-heading">
+      <p class="eyebrow">The canonical observance</p>
+      <h1 id="state-heading">The Reset<br>Reliquary</h1>
+      <p class="decree" id="confidence" data-confidence="unverified">UNVERIFIED APPARITION</p>
+      <p class="counter" id="counter">—</p>
+      <p class="counter-label" id="counter-label">No last reset has been recorded</p>
+      <p class="evidence" id="evidence">The Abbey has not yet received a verified observation. Silence is not evidence of a reset.</p>
+      <p class="ornament" aria-hidden="true">✦ ✧ ✦</p>
+    </section>
+
+    <div class="grid">
+      <section class="card" aria-labelledby="history-heading">
+        <h2 id="history-heading">The Recent Chronicle</h2>
+        <ol class="history" id="history">
+          <li><p>No reset events have entered the chronicle.</p></li>
+        </ol>
+      </section>
+
+      <aside class="card" aria-labelledby="provenance-heading">
+        <h2 id="provenance-heading">Provenance</h2>
+        <dl>
+          <dt>Source</dt>
+          <dd id="source">Reset surveillance process</dd>
+          <dt>Observed at</dt>
+          <dd id="observed">Not yet observed</dd>
+          <dt>Machine-readable</dt>
+          <dd><a href="reset-data.json">reset-data.json</a></dd>
+        </dl>
+      </aside>
+    </div>
+
+    <footer>
+      An unofficial and unnecessarily ecclesiastical status page. Times are shown in your local timezone.
+      <span id="load-error" class="error" hidden> The ledger could not be loaded; showing a safe unknown state.</span>
+    </footer>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const confidenceTone = {
+      "RESET CONFIRMED": "confirmed",
+      "PROBABLE BLESSING": "probable",
+      "UNVERIFIED APPARITION": "unverified",
+      "CONGREGATIONAL HYSTERIA": "hysteria"
+    };
+    const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "long" });
+    let lastReset = null;
+
+    function validDate(value) {
+      const date = value ? new Date(value) : null;
+      return date && !Number.isNaN(date.valueOf()) ? date : null;
+    }
+
+    function formatDuration(milliseconds) {
+      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return `${days}d ${String(hours).padStart(2, "0")}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(2, "0")}s`;
+    }
+
+    function tick() {
+      if (lastReset) $("counter").textContent = formatDuration(Date.now() - lastReset.valueOf());
+    }
+
+    function render(data) {
+      const confidence = confidenceTone[data.confidence] ? data.confidence : "UNVERIFIED APPARITION";
+      $("confidence").textContent = confidence;
+      $("confidence").dataset.confidence = confidenceTone[confidence];
+      $("evidence").textContent = data.statusText || "No evidence summary is available.";
+      $("source").textContent = data.source?.name || "Unknown source";
+
+      const updated = validDate(data.updatedAt);
+      const observed = validDate(data.source?.observedAt);
+      $("updated").textContent = updated ? `Ledger updated ${dateFormatter.format(updated)}` : "Ledger update unknown";
+      $("observed").textContent = observed ? dateFormatter.format(observed) : "Not yet observed";
+
+      lastReset = validDate(data.lastResetAt);
+      $("counter-label").textContent = lastReset
+        ? `since the last known reset · ${dateFormatter.format(lastReset)}`
+        : "No last reset has been recorded";
+      tick();
+
+      const history = Array.isArray(data.history) ? data.history : [];
+      $("history").replaceChildren(...(history.length ? history.map((event) => {
+        const item = document.createElement("li");
+        const time = document.createElement("time");
+        const eventDate = validDate(event.resetAt);
+        time.dateTime = event.resetAt || "";
+        time.textContent = eventDate ? dateFormatter.format(eventDate) : "Time unknown";
+        const detail = document.createElement("p");
+        detail.textContent = event.summary || event.confidence || "Reset recorded";
+        item.append(time, detail);
+        return item;
+      }) : [Object.assign(document.createElement("li"), { innerHTML: "<p>No reset events have entered the chronicle.</p>" })]));
+    }
+
+    fetch("reset-data.json", { cache: "no-store" })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Ledger returned ${response.status}`);
+        return response.json();
+      })
+      .then(render)
+      .catch(() => { $("load-error").hidden = false; });
+
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>

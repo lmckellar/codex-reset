@@ -16,7 +16,7 @@ The first functional static MVP is implemented in `public/`. It presents an inte
 
 The site fetches the JSON ledger without caching and safely falls back to the unknown state already present in the HTML if loading fails. Dates are rendered in the visitor's local timezone. Runtime source links are restricted to HTTP(S), matching the ledger validator.
 
-The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, UTC timestamps, source URL, and newest-first history ordering. It accepts an optional ledger path so surveillance can validate staged output before atomically replacing the public file.
+The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, strict UTC calendar timestamps (rejecting normalized impossible dates), source URL, and newest-first history ordering. It accepts an optional ledger path so surveillance can validate staged output before atomically replacing the public file.
 
 The `scripts/publish-reset-data.sh` helper now owns that atomic publication step. It validates a staged ledger first, copies it to a temporary file beside the public ledger, preserves the existing file mode, and renames it into place only after validation succeeds. Invalid staged data leaves the public ledger untouched.
 

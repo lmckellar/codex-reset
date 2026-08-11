@@ -39,12 +39,25 @@ function requireConfidence(value, path) {
 
 function parseUtcTimestamp(value, path, { nullable = false } = {}) {
   if (nullable && value === null) return null;
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(value)) {
+  const match = typeof value === "string"
+    ? value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?Z$/)
+    : null;
+  if (!match) {
     errors.push(`${path} must be an ISO 8601 UTC timestamp${nullable ? " or null" : ""}`);
     return null;
   }
   const timestamp = Date.parse(value);
-  if (Number.isNaN(timestamp)) {
+  const date = new Date(timestamp);
+  const calendarParts = [
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1,
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+    date.getUTCSeconds()
+  ];
+  const suppliedParts = match.slice(1, 7).map(Number);
+  if (Number.isNaN(timestamp) || calendarParts.some((part, index) => part !== suppliedParts[index])) {
     errors.push(`${path} is not a valid date`);
     return null;
   }

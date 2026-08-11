@@ -17,4 +17,10 @@ node scripts/validate-reset-data.mjs
 node scripts/validate-reset-data.mjs /path/to/staged-reset-data.json
 ```
 
+Run the validator's regression suite with:
+
+```sh
+node scripts/test-reset-data-validator.mjs
+```
+
 The expected fields and confidence vocabulary are recorded in `PROJECT_STATE.md`.

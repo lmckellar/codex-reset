@@ -10,7 +10,7 @@ The surveillance process publishes observations to `public/reset-data.json`. Pub
 scripts/publish-reset-data.sh /path/to/staged-reset-data.json
 ```
 
-The helper leaves the current public ledger untouched if validation fails or if the staged ledger's `updatedAt` is older than the published ledger. To validate without publishing, pass an optional staged path to the validator; with no argument it checks the public ledger:
+The helper serializes concurrent publishers and leaves the current public ledger untouched if validation fails, if the staged ledger's `updatedAt` is older than the published ledger, or if different content reuses the current timestamp. Republishing equivalent data is idempotent. To validate without publishing, pass an optional staged path to the validator; with no argument it checks the public ledger:
 
 ```sh
 node scripts/validate-reset-data.mjs

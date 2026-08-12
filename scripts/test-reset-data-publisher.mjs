@@ -85,6 +85,21 @@ try {
   }
   check(await readFile(publicLedger, "utf8") === baselineText, "stale rejection leaves the public ledger untouched");
 
+  const conflictingPath = join(fixtureRepo, "conflicting.json");
+  await writeFile(conflictingPath, serialize({ ...baselineLedger, state: "conflicting state" }));
+  try {
+    await execFileAsync("bash", [publishScript, conflictingPath]);
+    check(false, "a conflicting ledger cannot reuse the current update timestamp");
+  } catch (error) {
+    check(error.stderr.includes("Refusing to publish conflicting ledger"), "a conflicting ledger cannot reuse the current update timestamp");
+  }
+  check(await readFile(publicLedger, "utf8") === baselineText, "conflict rejection leaves the public ledger untouched");
+
+  const equivalentPath = join(fixtureRepo, "equivalent.json");
+  await writeFile(equivalentPath, JSON.stringify(baselineLedger));
+  await execFileAsync("bash", [publishScript, equivalentPath]);
+  check(JSON.parse(await readFile(publicLedger, "utf8")).updatedAt === baselineLedger.updatedAt, "an equivalent ledger may be republished idempotently");
+
   const validPath = join(fixtureRepo, "valid.json");
   const replacementText = serialize(replacementLedger);
   await writeFile(validPath, replacementText);

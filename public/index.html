@@ -289,7 +289,7 @@
 
     <footer>
       An unofficial and unnecessarily ecclesiastical status page. Times are shown in your local timezone.
-      <span id="load-error" class="error" hidden> The ledger could not be loaded; showing a safe unknown state.</span>
+      <span id="load-error" class="error" role="status" hidden> The ledger could not be loaded; showing a safe unknown state.</span>
     </footer>
   </main>
 
@@ -303,6 +303,8 @@
     };
     const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "long" });
     let lastReset = null;
+    let ledgerRequestInFlight = false;
+    let hasRenderedLedger = false;
 
     function validDate(value) {
       const date = value ? new Date(value) : null;
@@ -380,15 +382,31 @@
       }) : [Object.assign(document.createElement("li"), { innerHTML: "<p>No reset events have entered the chronicle.</p>" })]));
     }
 
-    fetch("reset-data.json", { cache: "no-store" })
-      .then((response) => {
+    async function refreshLedger() {
+      if (ledgerRequestInFlight) return;
+      ledgerRequestInFlight = true;
+      try {
+        const response = await fetch("reset-data.json", { cache: "no-store" });
         if (!response.ok) throw new Error(`Ledger returned ${response.status}`);
-        return response.json();
-      })
-      .then(render)
-      .catch(() => { $("load-error").hidden = false; });
+        render(await response.json());
+        hasRenderedLedger = true;
+        $("load-error").hidden = true;
+      } catch {
+        $("load-error").textContent = hasRenderedLedger
+          ? " The ledger could not be refreshed; displayed data may be stale."
+          : " The ledger could not be loaded; showing a safe unknown state.";
+        $("load-error").hidden = false;
+      } finally {
+        ledgerRequestInFlight = false;
+      }
+    }
 
+    refreshLedger();
+    setInterval(refreshLedger, 60_000);
     setInterval(tick, 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") refreshLedger();
+    });
   </script>
 </body>
 </html>

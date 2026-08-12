@@ -15,7 +15,7 @@ The first functional static MVP is implemented in `public/`. It presents an inte
 - a machine-readable `public/reset-data.json` ledger
 - a responsive cathedral-parody visual treatment with reduced-motion support
 
-The site fetches the JSON ledger without caching and safely falls back to the unknown state already present in the HTML if loading fails. Dates are rendered in the visitor's local timezone. Runtime source links are restricted to HTTP(S), matching the ledger validator.
+The site fetches the JSON ledger without caching and safely falls back to the unknown state already present in the HTML if the initial load fails. Open pages refresh the ledger every minute and when a backgrounded tab becomes visible, without overlapping requests; later refresh failures retain the last rendered observation and warn that it may be stale. Dates are rendered in the visitor's local timezone. Runtime source links are restricted to HTTP(S), matching the ledger validator.
 
 The Cloudflare Pages `_headers` artifact applies `Cache-Control: no-store, max-age=0, must-revalidate` specifically to `reset-data.json`. This complements the browser's no-store fetch and prevents reset observations from being held behind the static asset cache while leaving the rest of the site cacheable.
 

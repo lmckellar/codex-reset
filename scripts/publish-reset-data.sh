@@ -17,6 +17,16 @@ trap 'rm -f -- "$TEMP_LEDGER"' EXIT
 
 cp -- "$STAGED_LEDGER" "$TEMP_LEDGER"
 node "$SCRIPT_DIR/validate-reset-data.mjs" "$TEMP_LEDGER"
+node - "$TEMP_LEDGER" "$PUBLIC_LEDGER" <<'NODE'
+const { readFileSync } = require("node:fs");
+
+const staged = JSON.parse(readFileSync(process.argv[2], "utf8"));
+const current = JSON.parse(readFileSync(process.argv[3], "utf8"));
+if (Date.parse(staged.updatedAt) < Date.parse(current.updatedAt)) {
+    console.error(`Refusing to publish stale ledger updated at ${staged.updatedAt}; current ledger was updated at ${current.updatedAt}`);
+    process.exit(1);
+}
+NODE
 chmod --reference="$PUBLIC_LEDGER" "$TEMP_LEDGER"
 mv -- "$TEMP_LEDGER" "$PUBLIC_LEDGER"
 trap - EXIT

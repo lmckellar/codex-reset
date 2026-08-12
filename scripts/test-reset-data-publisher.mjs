@@ -75,6 +75,16 @@ try {
   }
   check(await readFile(publicLedger, "utf8") === baselineText, "rejection leaves the public ledger untouched");
 
+  const stalePath = join(fixtureRepo, "stale.json");
+  await writeFile(stalePath, serialize({ ...baselineLedger, updatedAt: "2026-08-11T09:59:59Z" }));
+  try {
+    await execFileAsync("bash", [publishScript, stalePath]);
+    check(false, "stale staged data is rejected");
+  } catch (error) {
+    check(error.stderr.includes("Refusing to publish stale ledger"), "stale staged data is rejected");
+  }
+  check(await readFile(publicLedger, "utf8") === baselineText, "stale rejection leaves the public ledger untouched");
+
   const validPath = join(fixtureRepo, "valid.json");
   const replacementText = serialize(replacementLedger);
   await writeFile(validPath, replacementText);

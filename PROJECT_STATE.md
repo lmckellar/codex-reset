@@ -10,6 +10,7 @@ The first functional static MVP is implemented in `public/`. It presents an inte
 - explicit current reset state
 - a live time-since-reset counter when `lastResetAt` is populated
 - last-known-reset context and recent history
+- confidence labels on every recent-history event, using the same vocabulary and visual tones as the current status
 - observation provenance, including a safe clickable HTTP(S) source when supplied
 - a machine-readable `public/reset-data.json` ledger
 - a responsive cathedral-parody visual treatment with reduced-motion support

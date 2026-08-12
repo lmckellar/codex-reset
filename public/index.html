@@ -208,6 +208,17 @@
     .history li { padding: 14px 0; border-top: 1px solid rgba(255, 255, 255, .1); }
     .history li:first-child { border-top: 0; padding-top: 0; }
     .history time { display: block; color: var(--blue); font-family: Cinzel, serif; font-size: .83rem; }
+    .history-confidence {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--gold);
+      font: 700 .66rem/1.3 Cinzel, serif;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .history-confidence[data-confidence="unverified"] { color: #d9b9e8; }
+    .history-confidence[data-confidence="probable"] { color: #8fd8ff; }
+    .history-confidence[data-confidence="hysteria"] { color: #ff8a80; }
     .history p { margin: 6px 0 0; color: var(--muted); }
 
     dl { margin: 0; }
@@ -355,9 +366,16 @@
         const eventDate = validDate(event.resetAt);
         time.dateTime = event.resetAt || "";
         time.textContent = eventDate ? dateFormatter.format(eventDate) : "Time unknown";
+        const eventConfidence = confidenceTone[event.confidence]
+          ? event.confidence
+          : "UNVERIFIED APPARITION";
+        const confidence = document.createElement("span");
+        confidence.className = "history-confidence";
+        confidence.dataset.confidence = confidenceTone[eventConfidence];
+        confidence.textContent = eventConfidence;
         const detail = document.createElement("p");
-        detail.textContent = event.summary || event.confidence || "Reset recorded";
-        item.append(time, detail);
+        detail.textContent = event.summary || "Reset recorded";
+        item.append(time, confidence, detail);
         return item;
       }) : [Object.assign(document.createElement("li"), { innerHTML: "<p>No reset events have entered the chronicle.</p>" })]));
     }

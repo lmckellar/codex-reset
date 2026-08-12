@@ -30,6 +30,11 @@ const staged = JSON.parse(readFileSync(process.argv[2], "utf8"));
 const current = JSON.parse(readFileSync(process.argv[3], "utf8"));
 const stagedUpdatedAt = Date.parse(staged.updatedAt);
 const currentUpdatedAt = Date.parse(current.updatedAt);
+const maximumClockSkew = 5 * 60 * 1000;
+if (stagedUpdatedAt > Date.now() + maximumClockSkew) {
+    console.error(`Refusing to publish ledger updated more than five minutes in the future: ${staged.updatedAt}`);
+    process.exit(1);
+}
 if (stagedUpdatedAt < currentUpdatedAt) {
     console.error(`Refusing to publish stale ledger updated at ${staged.updatedAt}; current ledger was updated at ${current.updatedAt}`);
     process.exit(1);

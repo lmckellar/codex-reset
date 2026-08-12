@@ -75,6 +75,17 @@ try {
   }
   check(await readFile(publicLedger, "utf8") === baselineText, "rejection leaves the public ledger untouched");
 
+  const futurePath = join(fixtureRepo, "future.json");
+  const farFuture = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  await writeFile(futurePath, serialize({ ...baselineLedger, updatedAt: farFuture }));
+  try {
+    await execFileAsync("bash", [publishScript, futurePath]);
+    check(false, "a far-future update timestamp is rejected");
+  } catch (error) {
+    check(error.stderr.includes("more than five minutes in the future"), "a far-future update timestamp is rejected");
+  }
+  check(await readFile(publicLedger, "utf8") === baselineText, "future timestamp rejection leaves the public ledger untouched");
+
   const stalePath = join(fixtureRepo, "stale.json");
   await writeFile(stalePath, serialize({ ...baselineLedger, updatedAt: "2026-08-11T09:59:59Z" }));
   try {

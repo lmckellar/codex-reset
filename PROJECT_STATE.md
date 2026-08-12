@@ -27,6 +27,8 @@ The dependency-free `scripts/test-reset-data-validator.mjs` regression runner ex
 
 The isolated `scripts/test-reset-data-publisher.mjs` integration runner verifies the publication boundary itself: invalid, far-future, stale, and equal-timestamp conflicting data are rejected without modifying the public ledger; equivalent data can be republished; valid newer data replaces it; destination permissions are preserved; and temporary publication files are cleaned up.
 
+The hourly maintenance wrapper independently runs the live ledger validator and both dependency-free regression suites before it commits or pushes a maintenance cycle. A successful agent exit is therefore not sufficient to publish a change that breaks the ledger contract or its atomic publication boundary. Failed pre-commit validation is logged and rolled back so it cannot leave a dirty tree that blocks every later cycle.
+
 ## Data contract
 
 The external surveillance process owns reset intelligence. It should update `public/reset-data.json`, preserving the existing fields and ISO 8601 UTC timestamps. Valid confidence labels are:
@@ -46,6 +48,7 @@ Each history entry should contain `resetAt`, `confidence`, and a concise `summar
 - `node scripts/test-reset-data-publisher.mjs`
 - `grep -A1 '^/reset-data.json$' public/_headers`
 - `scripts/publish-reset-data.sh /path/to/staged-reset-data.json`
+- `bash -n scripts/hourly-maintain.sh`
 - `git diff --check`
 
 ## Next useful work

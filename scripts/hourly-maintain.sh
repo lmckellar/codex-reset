@@ -45,7 +45,18 @@ if [[ -z "$(git status --porcelain)" ]]; then
     exit 0
 fi
 
-git diff --check >>"$LOG" 2>&1
+if ! {
+    git diff --check &&
+    node scripts/validate-reset-data.mjs &&
+    node scripts/test-reset-data-validator.mjs &&
+    node scripts/test-reset-data-publisher.mjs
+} >>"$LOG" 2>&1; then
+    echo "$(date -Is) Validation failed; reverting this run" >>"$LOG"
+    git reset --hard "$START_HEAD" >>"$LOG" 2>&1
+    git clean -fd >>"$LOG" 2>&1
+    exit 1
+fi
+
 git add -A
 git commit -m "chore: abbey maintenance $STAMP" >>"$LOG" 2>&1
 git push origin main >>"$LOG" 2>&1

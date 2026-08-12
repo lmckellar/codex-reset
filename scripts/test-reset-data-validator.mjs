@@ -61,6 +61,11 @@ const cases = [
     error: "source.observedAt must not be later than updatedAt"
   },
   {
+    name: "rejects observations earlier than the reported reset",
+    mutate: (ledger) => { ledger.source.observedAt = "2026-08-11T09:59:59Z"; },
+    error: "source.observedAt must not be earlier than lastResetAt"
+  },
+  {
     name: "rejects history that is not newest first",
     mutate: (ledger) => { ledger.history.reverse(); },
     error: "history must be ordered newest first"

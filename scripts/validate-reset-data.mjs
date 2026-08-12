@@ -90,6 +90,9 @@ if (requireObject(ledger, "ledger")) {
     if (observedTimestamp !== null && updatedTimestamp !== null && observedTimestamp > updatedTimestamp) {
       errors.push("source.observedAt must not be later than updatedAt");
     }
+    if (observedTimestamp !== null && lastResetTimestamp !== null && observedTimestamp < lastResetTimestamp) {
+      errors.push("source.observedAt must not be earlier than lastResetAt");
+    }
     if (ledger.source.url !== null) {
       try {
         const url = new URL(ledger.source.url);

@@ -16,7 +16,7 @@ The first functional static MVP is implemented in `public/`. It presents an inte
 
 The site fetches the JSON ledger without caching and safely falls back to the unknown state already present in the HTML if loading fails. Dates are rendered in the visitor's local timezone. Runtime source links are restricted to HTTP(S), matching the ledger validator.
 
-The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, strict UTC calendar timestamps (rejecting normalized impossible dates), source URL, and newest-first history ordering. It also rejects observations or reset events later than the ledger update, and requires `lastResetAt` to agree with the newest history event. It accepts an optional ledger path so surveillance can validate staged output before atomically replacing the public file.
+The dependency-free `scripts/validate-reset-data.mjs` checker now provides a deterministic pre-deploy check for the surveillance-owned ledger. It verifies the documented shape, confidence vocabulary, strict UTC calendar timestamps (rejecting normalized impossible dates), source URL, and newest-first history ordering. It also enforces the temporal chain from reset to observation to ledger update, rejects reset events later than the ledger update, and requires `lastResetAt` to agree with the newest history event. It accepts an optional ledger path so surveillance can validate staged output before atomically replacing the public file.
 
 The `scripts/publish-reset-data.sh` helper now owns that atomic publication step. It serializes concurrent publishers, validates a staged ledger first, rejects it if its `updatedAt` predates the published ledger, and rejects different content that reuses the current timestamp while allowing idempotent republication. It copies accepted data to a temporary file beside the public ledger, preserves the existing file mode, and renames it into place only after validation succeeds. Invalid, stale, or conflicting staged data leaves the public ledger untouched.
 
@@ -33,7 +33,7 @@ The external surveillance process owns reset intelligence. It should update `pub
 - `UNVERIFIED APPARITION`
 - `CONGREGATIONAL HYSTERIA`
 
-Each history entry should contain `resetAt`, `confidence`, and a concise `summary`. Newest events should come first, and the first event must match `lastResetAt`; both should be absent when no reset has been recorded. Reset and observation timestamps must not be later than `updatedAt`. The UI tolerates absent or malformed timestamps and unknown confidence values.
+Each history entry should contain `resetAt`, `confidence`, and a concise `summary`. Newest events should come first, and the first event must match `lastResetAt`; both should be absent when no reset has been recorded. When present, the current source observation must be at or after `lastResetAt`, and reset and observation timestamps must not be later than `updatedAt`. The UI tolerates absent or malformed timestamps and unknown confidence values.
 
 ## Validation
 

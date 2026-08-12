@@ -114,7 +114,9 @@ if (requireObject(ledger, "ledger")) {
       const timestamp = parseUtcTimestamp(event.resetAt, `${path}.resetAt`);
       requireConfidence(event.confidence, `${path}.confidence`);
       requireText(event.summary, `${path}.summary`);
-      if (timestamp !== null && timestamp > previousTimestamp) errors.push("history must be ordered newest first");
+      if (timestamp !== null && timestamp >= previousTimestamp) {
+        errors.push("history must contain unique reset times ordered newest first");
+      }
       if (index === 0) newestHistoryTimestamp = timestamp;
       if (timestamp !== null && updatedTimestamp !== null && timestamp > updatedTimestamp) {
         errors.push(`${path}.resetAt must not be later than updatedAt`);

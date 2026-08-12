@@ -68,7 +68,12 @@ const cases = [
   {
     name: "rejects history that is not newest first",
     mutate: (ledger) => { ledger.history.reverse(); },
-    error: "history must be ordered newest first"
+    error: "history must contain unique reset times ordered newest first"
+  },
+  {
+    name: "rejects duplicate reset times",
+    mutate: (ledger) => { ledger.history[1].resetAt = ledger.history[0].resetAt; },
+    error: "history must contain unique reset times ordered newest first"
   },
   {
     name: "rejects disagreement between last reset and history",

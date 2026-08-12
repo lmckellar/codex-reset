@@ -47,6 +47,7 @@ fi
 
 if ! {
     git diff --check &&
+    bash -n scripts/hourly-maintain.sh scripts/publish-reset-data.sh &&
     node scripts/validate-reset-data.mjs &&
     node scripts/test-reset-data-validator.mjs &&
     node scripts/test-reset-data-publisher.mjs

@@ -25,3 +25,5 @@ node scripts/test-reset-data-publisher.mjs
 ```
 
 The expected fields and confidence vocabulary are recorded in `PROJECT_STATE.md`.
+
+Cloudflare serves the ledger with a `no-store` response policy declared in `public/_headers`, so status observations are not held behind the static asset cache.
